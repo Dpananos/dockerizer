@@ -1,17 +1,19 @@
 # Dockerizer
 
-`{dockerizer}` is a small package to take analyses written on your machine and write/build dockerfiles/containers so that they can be run by someone else.
+`{dockerizer}` is a small package to take analyses written on your machine and write/build dockerfiles/images so that they can be run by someone else.
 
-Ideally, your analysis lives in a directory (e.g. `path/to/my/analysis`).  You can then call `dockerize` with a few options to write a dockerfile and optionally build the container.  Hopefully you're using `{renv}` to manage packages.  If so, `{dockerizer}` will read in the packages from your `renv.lock` file and construct a dockerfile with the right system dependencies.  
+## How To Use Dockerize
 
-If you run
+`{dockerizer}` requires that your analysis project uses [`{renv}`](https://rstudio.github.io/renv/articles/renv.html) to manage packages.
 
+In your analysis folder, run `write_dockerfile()` to create a dockerfile with the appropriate arguments for your project.  See `?write_dockerfile` for what arguments can be specified.
+
+Once the dockerfile is written, you can edit the file as you see fit or use the `build` and `image_name` arguments to build the image upon being written.  
+
+Once the image is built, the easiest way to run the container is 
+
+```bash
+docker run -p 8787:8787 -v $(pwd):/home/rstudio -e USER={username} -e PASSWORD={password} --name {container_name} -d {image_name}
 ```
-dir <- 'path/to/my/analysis/'
 
-write_dockerfile(analysis_dir = dir, port = '8787')
-```
-
-then `write_dockerfile` will create `path/to/my/analysis/dockerfile`.  Passing `build=TRUE` and `container_name="my_container_name"` will build the container.  Once built, you can access rstudio server at `https://localhost:8787/` and run your analysis.  
-
-
+You can then connect to an rstudio server at `https://localhost:8787/` (or whatever port you specified in your `docker run` command).  From there, you will need to install your packages using `renv::restore()`.

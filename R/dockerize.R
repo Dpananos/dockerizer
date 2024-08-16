@@ -25,13 +25,13 @@ write_dockerfile <- function(analysis_dir = ".",
                              distribution = "ubuntu",
                              release = "20.04",
                              build = FALSE,
-                             container_name = NULL) {
+                             image_name = NULL) {
   withr::with_dir(analysis_dir, {
     # Check that the project has an renv directory and a lockfile
 
     if (!dir.exists("renv")) {
       cli::cli_abort(c("{.fn write_dockerfile} only works for projects with renv.",
-        "!" = "Does your package use renv?"
+        "!" = "Does your project use renv?"
       ))
     }
 
@@ -59,21 +59,29 @@ write_dockerfile <- function(analysis_dir = ".",
 
 
   if (rlang::is_true(build)) {
-    if (rlang::is_null(container_name)) {
-      cli::cli_abort("{.arg container_name} is null, please enter a valid string.")
+    if (rlang::is_null(image_name)) {
+      cli::cli_abort("{.arg image_name} is null, please enter a valid string.")
     }
 
-    build_container(container_name = container_name)
+    build_image(image_name = image_name)
   }
 }
 
 
-build_container <- function(container_name = "rstudio-analysis") {
+build_image <- function(image_name = "rstudio-analysis") {
+  # Check docker is installed
+  docker_installed <- system("docker --version", intern = TRUE, ignore.stderr = TRUE)
+
+  # Print the result
+  if (length(docker_installed) == 0) {
+    cli::cli_abort("Docker does not appear to be installed")
+  }
+
   if (!file.exists("dockerfile")) {
     cli::cli_abort("A dockerfile must exist in the analysis directory.")
   }
 
-  command <- paste("docker build -t", container_name, ".", collapse = " ")
+  command <- paste("docker build -t", image_name, ".", collapse = " ")
 
   system(command)
 }
