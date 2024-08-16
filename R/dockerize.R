@@ -62,7 +62,6 @@ write_dockerfile <- function(analysis_dir = ".",
     if (rlang::is_null(image_name)) {
       cli::cli_abort("{.arg image_name} is null, please enter a valid string.")
     }
-
     build_image(image_name = image_name)
   }
 }
