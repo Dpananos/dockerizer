@@ -11,6 +11,7 @@ RoxygenNote: 7.3.2
 Imports: 
     cli,
     rlang,
-    withr
+    withr,
+    getsysreqs
 Authors@R: 
     person("Demetri", "Pananos", , "dpananos@gmail.com", role = c("aut", "cre"))
