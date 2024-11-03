@@ -42,7 +42,7 @@ write_dockerfile <- function(analysis_dir = ".",
     }
 
 
-    # Get system dependncies
+    # Get system dependencies
     sys_reqs <- getsysreqs::apt_get_install("renv.lock", distribution = distribution, release = release)
 
     if(rocker_rstudio_tag == "installed"){
