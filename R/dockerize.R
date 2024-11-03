@@ -18,7 +18,7 @@
 #'
 #' @examples
 write_dockerfile <- function(analysis_dir = ".",
-                             rocker_rstudio_tag = "latest",
+                             rocker_rstudio_tag = "installed",
                              port = "8787",
                              username = "rstudio",
                              password = "rstudio",
@@ -45,8 +45,16 @@ write_dockerfile <- function(analysis_dir = ".",
     # Get system dependncies
     sys_reqs <- getsysreqs::apt_get_install("renv.lock", distribution = distribution, release = release)
 
+    if(rocker_rstudio_tag == "installed"){
+      # Get the version of R installed on your machine
+      rocker_rstudio_tag_edited <- paste(R.version$major, R.version$minor, sep='.')
+    } else{
+      # Specify the tag manually, including "latest"
+      rocker_rstudio_tag_edited <- rocker_rstudio_tag
+    }
+
     data <- list(
-      rocker_rstudio_tag = rocker_rstudio_tag,
+      rocker_rstudio_tag = rocker_rstudio_tag_edited,
       system_dependencies = sys_reqs,
       port = port,
       username = username,
